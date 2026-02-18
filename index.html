@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Koh Samui vs Phuket — Climate Comparison</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #fff;
+      color: #292524;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 2rem;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1c1917;
+      letter-spacing: -0.02em;
+    }
+
+    header h1 span {
+      color: #1c1917;
+    }
+
+    header p {
+      color: #78716c;
+      font-size: 0.95rem;
+      margin-top: 0.3rem;
+    }
+
+    /* ── Controls ── */
+    .controls {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .toggle {
+      display: flex;
+      background: #f5f5f4;
+      border-radius: 10px;
+      padding: 3px;
+    }
+
+    .toggle button {
+      padding: 0.45rem 1.3rem;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #a8a29e;
+      transition: all 0.2s;
+    }
+
+    .toggle button.active {
+      background: #ec4899;
+      color: #fff;
+      box-shadow: 0 1px 4px rgba(236,72,153,0.3);
+    }
+
+    .toggle button:hover:not(.active) {
+      color: #44403c;
+    }
+
+    /* ── Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr;
+      gap: 8px 10px;
+      align-items: start;
+    }
+
+    /* Column headers */
+    .col-header {
+      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #1c1917;
+      padding: 0.5rem 0 0.6rem;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 2;
+    }
+
+    .col-corner {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 2;
+      min-height: 1px;
+    }
+
+    /* Month labels */
+    .month-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #44403c;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding-top: 16px;
+      line-height: 1;
+    }
+
+    /* ── Cell ── */
+    .cell {
+      background: #fff;
+      border: 2px solid #e7e5e4;
+      border-radius: 14px;
+      padding: 14px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .cell:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+
+    /* ── Temperature section ── */
+    .temp-section {
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e7e5e4;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .temp-nums {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .temp-high {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1c1917;
+      line-height: 1;
+    }
+
+    .temp-low {
+      font-size: 0.78rem;
+      color: #a8a29e;
+      font-weight: 500;
+    }
+
+    .fire-row {
+      display: flex;
+      align-items: center;
+      gap: 1px;
+    }
+
+    .fire-icon {
+      font-size: 0.85rem;
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0;
+      margin-right: 7px;
+    }
+
+    .fire {
+      font-size: 0.72rem;
+      line-height: 1;
+      transition: filter 0.3s, opacity 0.3s;
+    }
+
+    .fire.off {
+      filter: grayscale(1);
+      opacity: 0.15;
+    }
+
+    /* ── Metric rows ── */
+    .metric-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .metric-icon {
+      font-size: 0.85rem;
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .metric-dots {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .mdot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      transition: background 0.3s, opacity 0.3s;
+    }
+
+    .mdot.on { opacity: 1; }
+    .mdot.off { opacity: 0.15; }
+
+    .mdot.rain-on { background: #57534e; }
+    .mdot.rain-off { background: #d6d3d1; }
+
+    .mdot.sun-on { background: #d97706; }
+    .mdot.sun-off { background: #d6d3d1; }
+
+    .mdot.humid-on { background: #a8a29e; }
+    .mdot.humid-off { background: #d6d3d1; }
+
+    .metric-val {
+      font-size: 0.75rem;
+      color: #78716c;
+      font-weight: 500;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      margin-top: 2.5rem;
+      font-size: 0.72rem;
+      color: #a8a29e;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .container { padding: 1.5rem 0.8rem; }
+      header h1 { font-size: 1.5rem; }
+      .grid { grid-template-columns: 56px 1fr 1fr; gap: 6px 6px; }
+      .month-label { font-size: 0.7rem; }
+      .cell { padding: 10px 10px 8px; gap: 6px; }
+      .temp-high { font-size: 1.05rem; }
+      .fire { font-size: 0.62rem; }
+      .metric-icon { font-size: 0.75rem; width: 16px; }
+      .mdot { width: 7px; height: 7px; }
+      .metric-val { font-size: 0.65rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Koh Samui <span>vs</span> Phuket</h1>
+      <p>Monthly climate at a glance</p>
+    </header>
+
+    <div class="controls">
+      <div class="toggle">
+        <button id="btn-metric" class="active" onclick="setUnit('metric')">°C / mm</button>
+        <button id="btn-imperial" onclick="setUnit('imperial')">°F / in</button>
+      </div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <footer>
+      Data via Wikipedia — Ko Samui (WMO 1991–2020) &amp; Phuket (TMD 1981–2010)
+    </footer>
+  </div>
+
+  <script>
+    const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const monthsShort = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+    const data = {
+      samui: {
+        maxTemp:  [29.0,29.4,30.4,31.8,32.9,32.7,32.3,32.4,31.9,30.6,29.7,29.3],
+        minTemp:  [24.2,24.9,25.4,26.0,25.7,25.3,25.1,25.1,24.8,24.3,24.1,24.0],
+        precip:   [126.8,64.3,115.8,82.9,131.6,133.6,117.0,102.2,117.5,294.9,444.6,263.1],
+        sun:      [6.4,7.6,7.7,6.7,6.2,5.0,5.0,4.9,4.8,4.7,5.8,5.7],
+        humidity:  [82.7,81.2,81.0,80.7,79.7,78.1,78.3,78.0,80.0,84.7,85.5,82.6]
+      },
+      phuket: {
+        maxTemp:  [32.7,33.6,34.0,33.9,32.8,32.4,32.0,32.0,31.5,31.5,31.7,31.7],
+        minTemp:  [24.5,24.9,25.4,25.8,25.6,25.5,25.1,25.3,24.6,24.5,24.7,24.4],
+        precip:   [30.3,23.9,73.5,142.9,259.5,213.3,258.2,286.8,361.2,320.1,177.4,72.4],
+        sun:      [7.6,7.6,6.6,6.1,4.9,5.0,4.9,4.9,3.6,4.7,5.8,6.4],
+        humidity:  [70,69,71,75,79,79,79,79,82,82,79,75]
+      }
+    };
+
+    let unit = "metric";
+
+    const cToF = c => +(c * 9 / 5 + 32).toFixed(1);
+    const mmToIn = mm => +(mm / 25.4).toFixed(1);
+
+    function setUnit(u) {
+      unit = u;
+      document.getElementById("btn-metric").classList.toggle("active", u === "metric");
+      document.getElementById("btn-imperial").classList.toggle("active", u === "imperial");
+      render();
+    }
+
+    /* ── Rating scales (0–5) ── */
+    function tempRating(maxC) {
+      if (maxC < 29)   return 1;
+      if (maxC < 30)   return 2;
+      if (maxC < 31.5) return 3;
+      if (maxC < 33)   return 4;
+      return 5;
+    }
+
+    function rainRating(mm) {
+      if (mm < 25)  return 0;
+      if (mm < 75)  return 1;
+      if (mm < 150) return 2;
+      if (mm < 250) return 3;
+      if (mm < 350) return 4;
+      return 5;
+    }
+
+    function sunRating(hrs) {
+      if (hrs < 3)   return 1;
+      if (hrs < 4.5) return 2;
+      if (hrs < 5.5) return 3;
+      if (hrs < 6.5) return 4;
+      return 5;
+    }
+
+    function humidRating(pct) {
+      if (pct < 68) return 1;
+      if (pct < 72) return 2;
+      if (pct < 76) return 3;
+      if (pct < 80) return 4;
+      return 5;
+    }
+
+    /* ── Icon builders ── */
+    function fires(n) {
+      let h = "";
+      for (let i = 0; i < 5; i++) {
+        h += `<span class="fire ${i < n ? "on" : "off"}">🔥</span>`;
+      }
+      return h;
+    }
+
+    function dots(n, type) {
+      let h = "";
+      for (let i = 0; i < 5; i++) {
+        h += `<div class="mdot ${i < n ? type + "-on on" : type + "-off off"}"></div>`;
+      }
+      return h;
+    }
+
+    /* ── Build one cell ── */
+    function buildCell(loc, monthIdx) {
+      const d = data[loc];
+      const isMetric = unit === "metric";
+      const maxC = d.maxTemp[monthIdx];
+      const minC = d.minTemp[monthIdx];
+      const precipMm = d.precip[monthIdx];
+      const sunH = d.sun[monthIdx];
+      const humPct = d.humidity[monthIdx];
+
+      const hi = isMetric ? maxC + "°" : cToF(maxC) + "°";
+      const lo = isMetric ? minC + "°" : cToF(minC) + "°";
+      const rain = isMetric ? Math.round(precipMm) + " mm" : mmToIn(precipMm) + " in";
+
+      return `
+        <div class="cell">
+          <div class="temp-section">
+            <div class="temp-nums">
+              <span class="temp-high">${hi}</span>
+              <span class="temp-low">/ ${lo}</span>
+            </div>
+            <div class="fire-row">
+              <span class="fire-icon">🌡️</span>${fires(tempRating(maxC))}
+            </div>
+          </div>
+          <div class="metric-row">
+            <span class="metric-icon">🌧️</span>
+            <div class="metric-dots">${dots(rainRating(precipMm), "rain")}</div>
+            <span class="metric-val">${rain}</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-icon">☀️</span>
+            <div class="metric-dots">${dots(sunRating(sunH), "sun")}</div>
+            <span class="metric-val">${sunH} h</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-icon">💧</span>
+            <div class="metric-dots">${dots(humidRating(humPct), "humid")}</div>
+            <span class="metric-val">${Math.round(humPct)}%</span>
+          </div>
+        </div>`;
+    }
+
+    /* ── Render ── */
+    function render() {
+      const isMobile = window.innerWidth < 600;
+      const mNames = isMobile ? monthsShort : months;
+      let html = "";
+
+      // Column headers
+      html += `<div class="col-corner"></div>`;
+      html += `<div class="col-header">Phuket</div>`;
+      html += `<div class="col-header">Koh Samui</div>`;
+
+      // One row per month
+      for (let i = 0; i < 12; i++) {
+        html += `<div class="month-label">${mNames[i]}</div>`;
+        html += buildCell("phuket", i);
+        html += buildCell("samui", i);
+      }
+
+      document.getElementById("grid").innerHTML = html;
+    }
+
+    render();
+    window.addEventListener("resize", () => {
+      render();
+    });
+  </script>
+</body>
+</html>
