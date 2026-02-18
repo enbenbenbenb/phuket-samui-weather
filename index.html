@@ -430,13 +430,19 @@
       const lo = isMetric ? minC + "°" : cToF(minC) + "°";
       const rain = isMetric ? Math.round(precipMm) + " mm" : mmToIn(precipMm) + " in";
 
-      let sunRow = "";
+      let sunRow;
       if (sunH !== null) {
         sunRow = `
           <div class="metric-row">
             <span class="metric-icon">☀️</span>
             <div class="metric-dots">${dots(sunRating(sunH), "sun")}</div>
             <span class="metric-val">${sunH} h</span>
+          </div>`;
+      } else {
+        sunRow = `
+          <div class="metric-row">
+            <span class="metric-icon">☀️</span>
+            <span style="font-size:0.6rem;color:#d6d3d1;font-weight:500">N/A</span>
           </div>`;
       }
 
